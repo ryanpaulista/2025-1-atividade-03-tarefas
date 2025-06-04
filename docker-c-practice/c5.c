@@ -5,15 +5,27 @@
 
 int main(int argc, char *argv[])
 {
-pid_t pid[10];
-int i;
+    if (argc < 2) {
+        fprintf(stderr, "Uso: %s <N>\n", argv[0]);
+        return 1;
+    }
 
- int N = atoi(argv[argc-2]);
+    int N = atoi(argv[argc - 2]);
+    pid_t *pid = malloc((N + 1) * sizeof(pid_t));  // aloca N + 1 posições
 
- for (i=0; i<N; i++)
- pid[i] = fork();
- if (pid[0] != 0 && pid[N-1] != 0)
- pid[N] = fork();
- printf("X");
- return 0;
- }
+    if (!pid) {
+        perror("malloc");
+        return 1;
+    }
+
+    for (int i = 0; i < N; i++)
+        pid[i] = fork();
+
+    if (pid[0] != 0 && pid[N - 1] != 0)
+        pid[N] = fork();
+
+    printf("X");
+
+    free(pid);
+    return 0;
+}

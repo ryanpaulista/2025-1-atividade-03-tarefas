@@ -1,21 +1,31 @@
-int y = 0 ;
+#include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>  // Para sleep()
 
-void threadBody
-{
-int x = 0 ;
-sleep (10) ;
-printf ("x: %d, y:%d\n", ++x, ++y) ;
-thread_exit();
+int y = 0;
+
+void* threadBody(void* arg) {
+    int x = 0;
+    sleep(10);
+    printf("x: %d, y: %d\n", ++x, ++y);
+    pthread_exit(NULL);
 }
 
- main ()
- {
- thread_create (&tA, threadBody, ...) ;
- thread_create (&tB, threadBody, ...) ;
- sleep (1) ;
- thread_join (&tA) ;
- thread_join (&tB) ;
- sleep (1) ;
- thread_create (&tC, threadBody, ...) ;
- thread_join (&tC) ;
- }
+int main() {
+    pthread_t tA, tB, tC;
+
+    pthread_create(&tA, NULL, threadBody, NULL);
+    pthread_create(&tB, NULL, threadBody, NULL);
+
+    sleep(1);
+
+    pthread_join(tA, NULL);
+    pthread_join(tB, NULL);
+
+    sleep(1);
+
+    pthread_create(&tC, NULL, threadBody, NULL);
+    pthread_join(tC, NULL);
+
+    return 0;
+}
